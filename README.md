@@ -1,69 +1,155 @@
-# AI UI Generator - Ryze AI Assignment
+# AI UI Generator
 
-An AI-powered UI generator that converts natural language → working React code using a deterministic component library.
+A natural language interface for generating React UIs using a deterministic component system. Built for the Ryze AI assignment.
 
-##  Quick Start
+## Demo
+
+**Live:** [Your deployment URL]  
+**Video:** [Demo walkthrough]
+
+## What It Does
+
+Type what you want in plain English, and the system generates working React code using a fixed set of components. You can iterate on the design with follow-up messages, and it modifies the existing code rather than rewriting everything.
+
+The AI uses three separate agents:
+1. **Planner** - figures out which components you need and how to arrange them
+2. **Generator** - writes the actual React code
+3. **Explainer** - tells you what it did and why
+
+Everything uses a locked-down component library (Button, Card, Input, Table, Modal, Sidebar, Navbar, Chart). No custom styling or new components get created during generation.
+
+## Running Locally
+
 ```bash
-# Install dependencies
+git clone [repo-url]
+cd ryze-ai-ui-generator
 npm install
+```
 
-# Set up environment variables
-cp .env.example .env.local
+Add your Anthropic API key to `.env.local`:
+```
+ANTHROPIC_API_KEY=your_key_here
+```
 
-# Run development server
+Then:
+```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Open http://localhost:3000
 
-##  Project Structure
+## How It Works
 
-See `docs/ARCHITECTURE.md` for detailed architecture overview.
+The interface has three panels: chat on the left, code editor in the middle, live preview on the right.
 
-##  AI Agent System
+When you type a request like "make a login form", here's what happens:
 
-Three-step pipeline:
-1. **Planner**: Interprets intent → Structured plan
-2. **Generator**: Plan → React code
-3. **Explainer**: Explains decisions
+1. Your input goes to the Planner, which decides you need a Card (container), two Inputs (email/password), and a Button (submit)
+2. The Generator writes React code using only those components from the fixed library
+3. The Explainer describes what got built
+4. Code appears in the editor, preview renders on the right
 
-##  Core Constraint
+If you say "add a forgot password link", the Generator modifies the existing code instead of starting over.
 
-Uses a **fixed component library** - components never change. AI can only:
-- Select components
-- Compose layouts
-- Set props
-- Provide content
+Every generation gets saved to history, so you can roll back if something breaks.
 
-##  Component Library
+## Project Structure
 
-- Button, Card, Input, Table
-- Modal, Sidebar, Navbar, Chart
+```
+src/
+├── app/
+│   ├── api/generate/route.ts    # API endpoint
+│   └── page.tsx                  # Main UI
+├── components/
+│   ├── ui/                       # The 8 components
+│   ├── chat/ChatPanel.tsx
+│   ├── editor/CodeEditor.tsx
+│   └── preview/LivePreview.tsx
+├── lib/
+│   ├── ai/
+│   │   ├── planner.ts
+│   │   ├── generator.ts
+│   │   ├── explainer.ts
+│   │   └── orchestrator.ts
+│   ├── validation/
+│   │   └── componentWhitelist.ts
+│   └── store/useAppStore.ts
+└── types/
+```
 
-##  Features
+## Component Library
 
-- Natural language UI generation
-- Iterative modifications
-- Version rollback
-- Live preview
-- AI explanations
+All eight components are pre-styled with Tailwind. The AI can only use these:
 
-##  Tech Stack
+**Button** - Different sizes/variants, click handlers  
+**Card** - Containers with optional titles  
+**Input** - Text fields with labels and validation  
+**Table** - Data tables with custom columns  
+**Modal** - Dialogs and popups  
+**Sidebar** - Side navigation  
+**Navbar** - Top navigation bars  
+**Chart** - Basic data visualization  
 
-- Next.js 14 + TypeScript
+## Safety
+
+The validation layer blocks:
+- Inline styles (`style={{...}}`)
+- Dynamic className generation
+- Components not in the whitelist
+- Prompt injection attempts
+
+If the AI tries to generate something invalid, the validator catches it before rendering.
+
+## Tech Stack
+
+- Next.js 14 (App Router)
+- TypeScript
+- Anthropic Claude Sonnet 4
 - Tailwind CSS
-- Anthropic Claude API
 - Zustand (state)
 - Monaco Editor
 
-##  Assignment Requirements
+## Limitations
 
--  Multi-step AI agent
--  Deterministic components
--  Iterative edits
--  Explainability
--  Version control
+The component library is intentionally limited. Complex UIs might need multiple iterations to get right. Generated components don't share state with each other (they use local state only).
+
+The AI occasionally suggests layouts that don't quite work - the validator catches most of these, but you might need to rephrase your request.
+
+## What I'd Add Next
+
+With more time, I'd implement:
+- Response streaming for better feedback
+- Visual diff between versions
+- More component variants (different button styles, table layouts, etc.)
+- Better error recovery when the AI makes mistakes
+- Export to standalone project
+
+## Testing
+
+Try these:
+
+```
+"Create a login form"
+"Build a dashboard with a table and navbar"
+"Make it more minimal" (after generating something)
+"Add a modal for user settings"
+"Change the button to red" - should work
+"Use Material-UI" - should reject
+```
+
+The system should handle normal requests and reject anything trying to break the component restrictions.
+
+## Deployment
+
+Works on Vercel out of the box:
+
+```bash
+vercel
+vercel env add ANTHROPIC_API_KEY
+```
+
+Set your API key in the Vercel dashboard under environment variables.
 
 ---
 
-Built for Ryze AI Full-Stack Assignment
+Built as part of the Ryze AI technical assessment.

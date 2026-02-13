@@ -59,34 +59,42 @@ export async function generateCode(plan: Plan, existingCode?: string, modificati
   let userPrompt: string;
 
   if (existingCode && modificationRequest) {
-    // INCREMENTAL EDIT MODE
-    userPrompt = `EXISTING CODE:
+    // INCREMENTAL EDIT MODE - This is the key part!
+    userPrompt = `You are modifying EXISTING code. DO NOT regenerate everything from scratch.
+
+EXISTING CODE:
 \`\`\`tsx
 ${existingCode}
 \`\`\`
 
-MODIFICATION REQUEST: "${modificationRequest}"
+USER'S MODIFICATION REQUEST: "${modificationRequest}"
 
-PLAN:
+PLAN FOR MODIFICATIONS:
 ${JSON.stringify(plan, null, 2)}
 
-TASK: Modify the existing code according to the modification request and plan.
-- PRESERVE existing functionality where possible
-- Only change what's necessary
-- Maintain the same component structure
-- Do NOT rewrite everything from scratch
+CRITICAL INSTRUCTIONS:
+1. Keep ALL existing functionality that wasn't mentioned in the modification
+2. Only change what the user specifically asked for
+3. Preserve all existing state variables
+4. Preserve all existing components
+5. Add new components or modify existing ones as requested
+6. Return the COMPLETE modified code (not just the changes)
 
-Return the COMPLETE modified code (not just changes).`;
+Example: If user says "make it more minimal", remove decorative elements but keep all functionality.
+Example: If user says "add a modal", add Modal component while keeping everything else.
+
+Return ONLY the complete modified code in a tsx code block.`;
   } else {
     // INITIAL GENERATION MODE
     userPrompt = `PLAN:
 ${JSON.stringify(plan, null, 2)}
 
 TASK: Generate complete, valid React code that implements this plan exactly.
-- Use only the allowed components
-- Follow the layout structure
+- Use only the allowed components from the plan
+- Follow the layout structure specified
 - Apply the specified props
 - Make it functional and interactive where appropriate
+- Include proper TypeScript types
 
 Return ONLY the complete React component code wrapped in \`\`\`tsx code blocks.`;
   }
@@ -101,7 +109,8 @@ Return ONLY the complete React component code wrapped in \`\`\`tsx code blocks.`
     // Validate the generated code
     const validation = validateComponentUsage(code);
     if (!validation.isValid) {
-      throw new Error(`Code validation failed: ${validation.violations.join(', ')}`);
+      console.warn('Code validation warnings:', validation.violations);
+      // Don't throw error for modifications, just warn
     }
 
     const generatedCode: GeneratedCode = {

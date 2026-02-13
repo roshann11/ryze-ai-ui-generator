@@ -4,8 +4,8 @@ A natural language interface for generating React UIs using a deterministic comp
 
 ## Demo
 
-**Live:** [Your deployment URL]  
-**Video:** [Demo walkthrough]
+**Live:** https://ryze-ai-ui-generator.vercel.app/  
+**Video:** https://drive.google.com/drive/home?lfhs=2
 
 ## What It Does
 

@@ -1,5 +1,3 @@
-// Mock AI Client - No API Key Required
-// This simulates AI responses for testing without using actual API credits
 
 export const AI_CONFIG = {
   model: 'mock-ai-v1',
@@ -7,7 +5,7 @@ export const AI_CONFIG = {
   temperature: 0.3,
 };
 
-// Mock delay to simulate API call
+
 const mockDelay = () => new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400));
 
 export async function callClaude(
@@ -18,10 +16,10 @@ export async function callClaude(
   console.log('System prompt type:', systemPrompt.substring(0, 50) + '...');
   console.log('User request:', userPrompt.substring(0, 100) + '...');
 
-  // Simulate network delay
+  
   await mockDelay();
 
-  // Detect which agent is calling based on system prompt
+  
   if (systemPrompt.includes('Planning Agent')) {
     return generateMockPlan(userPrompt);
   } else if (systemPrompt.includes('Code Generator')) {
@@ -33,13 +31,13 @@ export async function callClaude(
   return 'Mock AI response';
 }
 
-// Mock Planner Agent
+
 function generateMockPlan(userRequest: string): string {
   console.log('📋 Mock Planner: Creating plan...');
 
   const lowerRequest = userRequest.toLowerCase();
   
-  // Detect what components to use based on user request
+  
   const needsNavbar = lowerRequest.includes('navbar') || lowerRequest.includes('navigation');
   const needsSidebar = lowerRequest.includes('sidebar') || lowerRequest.includes('side panel');
   const needsTable = lowerRequest.includes('table') || lowerRequest.includes('data') || lowerRequest.includes('list');
@@ -50,7 +48,7 @@ function generateMockPlan(userRequest: string): string {
   const components = [];
   let layoutType = 'single';
 
-  // Build component list based on detected needs
+  
   if (needsNavbar) {
     components.push({
       id: 'navbar-1',
@@ -158,7 +156,7 @@ function generateMockPlan(userRequest: string): string {
     });
   }
 
-  // If no specific components detected, create a default UI
+  
   if (components.length === 0) {
     components.push(
       {
@@ -204,7 +202,7 @@ function generateMockPlan(userRequest: string): string {
   return JSON.stringify(plan, null, 2);
 }
 
-// Mock Generator Agent
+
 function generateMockCode(userRequest: string): string {
   console.log('⚙️ Mock Generator: Creating code...');
 
@@ -230,7 +228,7 @@ function generateMockCode(userRequest: string): string {
     uiImports.push('Card', 'Button');
   }
 
-  // Remove duplicates
+  
   uiImports = [...new Set(uiImports)];
 
   let code = `\`\`\`tsx
@@ -408,7 +406,7 @@ export default function GeneratedUI() {
   return code;
 }
 
-// Mock Explainer Agent
+
 function generateMockExplanation(userRequest: string): string {
   console.log('💬 Mock Explainer: Creating explanation...');
 
@@ -448,7 +446,7 @@ function generateMockExplanation(userRequest: string): string {
   return explanation;
 }
 
-// Mock anthropic object for compatibility
+
 export const anthropic = {
   messages: {
     create: async () => ({ content: [{ type: 'text', text: 'mock' }] })

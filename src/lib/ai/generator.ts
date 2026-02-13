@@ -59,7 +59,7 @@ export async function generateCode(plan: Plan, existingCode?: string, modificati
   let userPrompt: string;
 
   if (existingCode && modificationRequest) {
-    // INCREMENTAL EDIT MODE - This is the key part!
+    
     userPrompt = `You are modifying EXISTING code. DO NOT regenerate everything from scratch.
 
 EXISTING CODE:
@@ -85,7 +85,7 @@ Example: If user says "add a modal", add Modal component while keeping everythin
 
 Return ONLY the complete modified code in a tsx code block.`;
   } else {
-    // INITIAL GENERATION MODE
+    
     userPrompt = `PLAN:
 ${JSON.stringify(plan, null, 2)}
 
@@ -106,11 +106,11 @@ Return ONLY the complete React component code wrapped in \`\`\`tsx code blocks.`
     const codeMatch = response.match(/```tsx\n?([\s\S]*?)\n?```/) || response.match(/```typescript\n?([\s\S]*?)\n?```/);
     const code = codeMatch ? codeMatch[1].trim() : response.trim();
 
-    // Validate the generated code
+    
     const validation = validateComponentUsage(code);
     if (!validation.isValid) {
       console.warn('Code validation warnings:', validation.violations);
-      // Don't throw error for modifications, just warn
+      
     }
 
     const generatedCode: GeneratedCode = {
@@ -118,7 +118,7 @@ Return ONLY the complete React component code wrapped in \`\`\`tsx code blocks.`
       planId: plan.id,
       code,
       timestamp: Date.now(),
-      explanation: '', // Will be filled by explainer
+      explanation: '', 
     };
 
     return generatedCode;

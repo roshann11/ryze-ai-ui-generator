@@ -12,7 +12,7 @@ export default function Home() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold">AI UI Generator</h1>
-            <p className="text-sm text-neutral-400">Ryze AI Assignment - Deterministic Component System</p>
+            <p className="text-sm text-neutral-400"> Deterministic Component System</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-xs text-neutral-400">

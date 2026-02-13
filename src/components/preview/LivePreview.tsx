@@ -20,12 +20,12 @@ export const LivePreview: React.FC = () => {
       return;
     }
 
-    // Clean code
+    
     const cleanCode = currentCode
       .replace(/import\s+.*?from\s+['"].*?['"];?\s*/g, '')
       .replace(/export\s+default\s+/g, '');
 
-    // Create full HTML document
+    
     const html = `<!DOCTYPE html>
 <html>
 <head>
